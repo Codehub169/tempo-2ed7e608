@@ -21,15 +21,22 @@ router.get('/causes', async (req, res) => {
 
 // Get a single cause by ID
 router.get('/causes/:id', async (req, res) => {
+  const idParam = req.params.id;
+  const id = parseInt(idParam, 10);
+
+  if (isNaN(id) || id <= 0) {
+    return res.status(400).json({ error: 'Invalid cause ID format. ID must be a positive number.' });
+  }
+
   try {
-    const cause = await getCauseById(req.params.id);
+    const cause = await getCauseById(id);
     if (cause) {
       res.json(cause);
     } else {
       res.status(404).json({ error: 'Cause not found' });
     }
   } catch (err) {
-    console.error(`Error fetching cause ${req.params.id}:`, err);
+    console.error(`Error fetching cause ${idParam}:`, err);
     res.status(500).json({ error: 'Failed to fetch cause' });
   }
 });
@@ -37,18 +44,33 @@ router.get('/causes/:id', async (req, res) => {
 // Submit a donation
 router.post('/donations', async (req, res) => {
   const { causeId, donorName, donorEmail, amount } = req.body;
-  if (!donorName || !donorEmail || !amount || (causeId && isNaN(parseInt(causeId, 10))) || isNaN(parseFloat(amount))) {
-    return res.status(400).json({ error: 'Invalid donation data. Required fields: donorName, donorEmail, amount. causeId must be a number if provided.' });
+
+  // Validate required fields for donor information
+  if (!donorName || !donorEmail) {
+    return res.status(400).json({ error: 'Invalid donation data. Required fields: donorName, donorEmail.' });
   }
-  if (parseFloat(amount) <= 0) {
-    return res.status(400).json({ error: 'Donation amount must be positive.' });
+  
+  // Validate amount
+  if (amount === undefined || amount === null || amount === '') {
+     return res.status(400).json({ error: 'Invalid donation data. Required field: amount.' });
+  }
+  const numericAmount = parseFloat(amount);
+  if (isNaN(numericAmount) || numericAmount <= 0) {
+    return res.status(400).json({ error: 'Donation amount must be a positive number.' });
+  }
+
+  let validCauseId = null;
+  // Check if causeId is meaningfully provided (not undefined, null, or empty string)
+  if (causeId !== undefined && causeId !== null && causeId !== '') {
+    const parsedId = parseInt(causeId, 10);
+    if (isNaN(parsedId) || parsedId <= 0) {
+      return res.status(400).json({ error: 'Invalid causeId. Must be a positive number if provided.' });
+    }
+    validCauseId = parsedId;
   }
 
   try {
-    // Ensure causeId is null if not provided or invalid, rather than potentially 0 or NaN
-    const validCauseId = causeId ? parseInt(causeId, 10) : null;
-
-    // If causeId is provided, check if it exists
+    // If causeId is provided (i.e., validCauseId is not null), check if it exists
     if (validCauseId !== null) {
       const cause = await getCauseById(validCauseId);
       if (!cause) {
@@ -58,9 +80,9 @@ router.post('/donations', async (req, res) => {
 
     const result = await addDonation({ 
       causeId: validCauseId, 
-      donorName, 
-      donorEmail, 
-      amount: parseFloat(amount) 
+      donorName,
+      donorEmail,
+      amount: numericAmount 
     });
     res.status(201).json({ message: 'Donation successful', donationId: result.id });
   } catch (err) {
@@ -76,11 +98,8 @@ router.post('/contact', async (req, res) => {
     return res.status(400).json({ error: 'Invalid contact data. Required fields: name, email, message.' });
   }
 
-  // Basic email validation regex
-  const emailRegex = /^[^
-	]+@[^
-	]+\.[^
-	]+$/;
+  // Basic email validation regex - Corrected: removed extra backslash before dot.
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Invalid email format.' });
   }
