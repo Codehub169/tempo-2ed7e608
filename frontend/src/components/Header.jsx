@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Box,
   Flex,
-  Heading,
+  // Heading, // Kept for potential use elsewhere, but logo is now an Image. Removed from this file as Image is used.
   Link as ChakraLink,
   IconButton,
   useDisclosure,
@@ -14,8 +14,8 @@ import {
   DrawerBody,
   VStack,
   HStack,
-  Spacer,
-  Image
+  // Spacer, // Removed as it's not used
+  Image // Ensure Image is imported
 } from '@chakra-ui/react';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
@@ -35,6 +35,11 @@ const Header = () => {
   // Function to check if a link is active
   const isActive = (path) => location.pathname === path;
 
+  // Define logo element to reuse
+  const Logo = () => (
+    <Image src="/logo-hopeharbor.svg" alt="HopeHarbor Logo" h={{ base: '32px', md: '40px' }} fallbackSrc="https://via.placeholder.com/150x40?text=HopeHarbor" />
+  );
+
   return (
     <Box
       as="header"
@@ -44,14 +49,12 @@ const Header = () => {
       boxShadow="sm"
       position="sticky"
       top={0}
-      zIndex="sticky"
+      zIndex="sticky" // Chakra's zIndex scale can be used, or a specific number like 1100 for sticky headers
     >
       <Flex alignItems="center" justifyContent="space-between" maxW="container.xl" mx="auto">
         {/* Logo */}
         <RouterLink to="/">
-          <Heading as="h1" size="lg" color="primary.default" fontFamily="primary">
-            Hope<Box as="span" color="secondary.default">Harbor</Box>
-          </Heading>
+          <Logo />
         </RouterLink>
 
         {/* Desktop Navigation */}
@@ -64,7 +67,7 @@ const Header = () => {
               fontFamily="primary"
               fontWeight={isActive(item.path) ? 'bold' : 'medium'}
               fontSize="md"
-              color={isActive(item.path) ? 'primary.default' : 'text.base'}
+              color={isActive(item.path) ? 'primary.default' : 'neutral.textBase'} // Updated to use neutral.textBase from theme for consistency
               pb={1}
               borderBottomWidth={isActive(item.path) ? '2px' : '0'}
               borderColor="primary.default"
@@ -96,9 +99,10 @@ const Header = () => {
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px">
-            <Heading as="h2" size="md" color="primary.default" fontFamily="primary">
-              Hope<Box as="span" color="secondary.default">Harbor</Box>
-            </Heading>
+            {/* Logo in Drawer */}
+            <RouterLink to="/" onClick={onClose}> {/* Added onClick={onClose} to logo in drawer for better UX */}
+              <Logo />
+            </RouterLink>
           </DrawerHeader>
           <DrawerBody>
             <VStack spacing={4} align="stretch" mt={4}>
@@ -116,7 +120,7 @@ const Header = () => {
                   p={2}
                   borderRadius="md"
                   bg={isActive(item.path) ? 'primary.light' : 'transparent'}
-                  color={isActive(item.path) ? 'primary.default' : 'text.base'}
+                  color={isActive(item.path) ? 'primary.default' : 'neutral.textBase'} // Updated to use neutral.textBase
                   _hover={{
                     textDecoration: 'none',
                     bg: 'primary.light',
