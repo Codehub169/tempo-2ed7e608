@@ -1,0 +1,20 @@
+{
+  "name": "donation-platform-monorepo",
+  "version": "1.0.0",
+  "description": "Donation platform with React frontend and Node.js backend.",
+  "private": true,
+  "scripts": {
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && npm install",
+    "install:all": "npm run install:frontend && npm run install:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "start:backend": "cd backend && npm start",
+    "start": "npm run build:frontend && npm run start:backend",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "lint": "npm run lint --prefix frontend && npm run lint --prefix backend",
+    "test": "echo \"Error: no test specified in root\" && exit 1"
+  },
+  "author": "AI Developer",
+  "license": "ISC"
+}

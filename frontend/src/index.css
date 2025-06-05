@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif; /* Default body font as per design system (secondary) */
+  color: #374151; /* var(--color-text-base) */
+  background-color: #FFFFFF; /* var(--color-bg-base) */
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar (optional, for modern look) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F9FAFB; /* var(--color-bg-light) */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E5E7EB; /* var(--color-border) */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D1D5DB; /* A bit darker for hover */
+}
