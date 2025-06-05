@@ -1,17 +1,21 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { fileURLToPath, URL } from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 9000, // Matches the port in frontend/package.json dev script
+    // Vite dev server port. Changed to 5173 to avoid conflict if backend also runs on 9000.
+    // Note: if frontend/package.json dev script uses `vite --port 9000`, it will override this setting.
+    // For the proxy to work correctly in development, the Vite dev server and the backend API server must run on different ports.
+    port: 5173,
     proxy: {
       // Proxy API requests to the backend during development
       "/api": {
-        target: "http://localhost:3000", // Assuming backend runs on port 3000
+        target: "http://localhost:9000", // Backend is expected to run on port 9000
         changeOrigin: true,
-        secure: false,
+        secure: false, // Typically false for localhost HTTP proxying
       },
     },
   },
@@ -20,7 +24,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": "/src", // Alias for src directory
+      "@": fileURLToPath(new URL("./src", import.meta.url)), // Corrected alias for ESM
     },
   },
 });

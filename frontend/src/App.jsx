@@ -1,9 +1,10 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout'; // To be created
-import HomePage from './pages/HomePage';
-import DonationPage from './pages/DonationPage'; // To be created
-import ContactPage from './pages/ContactPage'; // To be created
+import Layout from '@/components/Layout';
+import HomePage from '@/pages/HomePage';
+import DonationPage from '@/pages/DonationPage';
+import ContactPage from '@/pages/ContactPage';
+import AboutPage from '@/pages/AboutPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         {/* Route for specific cause donation, e.g., /donate/:causeId */}
         <Route path="/donate/:causeId" element={<DonationPage />} /> 
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/about" element={<AboutPage />} />
         {/* Add more routes as needed, e.g., for a 404 page */}
       </Routes>
     </Layout>
